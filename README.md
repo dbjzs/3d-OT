@@ -7,7 +7,20 @@
 
 ## Requirements
 You'll need to install the following packages in order to run the codes.
-python==3.10.13
+* Python==3.10.13
+* anndata==0.10.5.post1
+matplotlib==3.6.2
+numpy==1.26.3
+pandas==2.2.3
+scanpy==1.9.8
+torch==2.2.0
+torch_geometric==2.4.0
+scikit-learn==1.4.0
+scipy==1.12.0
+scikit-misc==0.5.1
+tqdm==4.67.1
+R==4.3.1
+rpy2==3.5.11
 
 
 ## Tutorial
