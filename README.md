@@ -28,3 +28,5 @@ All the result tutorials mentioned in the text can be found here：
 
 
 <img src='docs/show674.png' width='250'> <img src='docs/H3K27ac.PNG' width='350'> <img src='docs/3D.png' width='200'>
+
+## Installation
