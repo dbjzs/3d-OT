@@ -1,30 +1,9 @@
 import scanpy as sc
 import numpy as np
-from typing import List
-import anndata
-from typing import Optional, Union
-from sklearn.neighbors import kneighbors_graph
-import scanpy as sc
-import numpy as np
-from scipy.sparse import issparse
 from sklearn.utils.extmath import randomized_svd
 from scipy.sparse import csc_matrix, csr_matrix
 from typing import List
-import os
-#os.environ['R_HOME'] = '/home/dbj/anaconda3/envs/r/lib/R'
-
-import rpy2.robjects as robjects
-r_home = robjects.r['Sys.getenv']('R_HOME')[0]
-os.environ['R_HOME'] = r_home
-from rpy2.robjects.packages import importr
-import rpy2.robjects as robjects
-robjects.r.library("mclust")
-from sklearn.decomposition import PCA
-from sklearn.preprocessing import StandardScaler
-import random
-import torch
-import time
-
+import anndata
 
 def set_seed(seed):
     random.seed(seed)
@@ -43,7 +22,7 @@ class Graph:
         self.k_neighbors = k_neighbors
         self.pcloud = pcloud
         self.express = express
-        self.name = name
+        self.name = name  # 新增属性：存储节点的名称
         self.truth = truth 
     def to(self, device):
         self.edges = self.edges.to(device)
@@ -56,13 +35,12 @@ class Graph:
     def construct_graph(pcloud, nb_neighbors, expr,names,truth):
         nb_points = pcloud.shape[1]
         size_batch = pcloud.shape[0]
-
         distance_matrix = torch.sum(pcloud**2, -1, keepdim=True)
         distance_matrix = distance_matrix + distance_matrix.transpose(1, 2)
         distance_matrix = distance_matrix - 2 * torch.bmm(
             pcloud, pcloud.transpose(1, 2)
         )
-
+        
         neighbors = torch.argsort(distance_matrix, -1)[..., :nb_neighbors]
         effective_nb_neighbors = neighbors.shape[-1]
         neighbors = neighbors.reshape(size_batch, -1)
@@ -82,7 +60,6 @@ class Graph:
         neighbors = neighbors.view(-1)
         pclouds = pcloud
         express = expr
-        
         graph = Graph(
             neighbors,
             edge_feats,
@@ -94,28 +71,6 @@ class Graph:
             truth,
         )
         return graph
-
-
-
-def prepare_data(adata, location, nb_neighbors=10):
-
-    pcloud = adata.obsm[location][:, [0, 1]]  
-    
-    if issparse(adata.obsm['feat']):
-        express = torch.tensor(adata.obsm['feat'].toarray(), dtype=torch.float)  # 转为密集张量
-    else:
-        express = torch.tensor(adata.obsm['feat'], dtype=torch.float)
-        
-    pcloud = torch.tensor(pcloud, dtype=torch.float)
-    pcloud_batched = pcloud.unsqueeze(0)
-    signal = express.unsqueeze(0)
-
-    names = list(adata.obs_names)
-    truth = adata.obs['truth'].values
-
-    graph = Graph.construct_graph(pcloud_batched, nb_neighbors, signal,names,truth)
-
-    return graph
 
 
 def prepare_data_pca(adata, location, nb_neighbors=10):
@@ -139,7 +94,22 @@ def prepare_data_pca(adata, location, nb_neighbors=10):
     return graph
 
 
+def prepare_data(adata, location, nb_neighbors=10):
+    pcloud = adata.obsm[location][:, [0, 1]]
 
+    if issparse(adata.X):
+        express = torch.tensor(adata.X.toarray(), dtype=torch.float)
+    else:
+        express = torch.tensor(adata.X, dtype=torch.float)
+        
+    pcloud = torch.tensor(pcloud, dtype=torch.float)
+    pcloud_batched = pcloud.unsqueeze(0)
+    signal = express.unsqueeze(0)
+    names = list(adata.obs_names)
+    truth = torch.tensor(adata.obs['truth'].astype("category").cat.codes.values, dtype=torch.long)
+    graph = Graph.construct_graph(pcloud_batched, nb_neighbors, signal,names,truth)
+
+    return graph
 
 
 def dpca(adatas: List,join, n_comps: int = 50) -> List:
@@ -148,26 +118,19 @@ def dpca(adatas: List,join, n_comps: int = 50) -> List:
     adata_all = adata_all[:, adata_all.var.highly_variable]
     sc.pp.normalize_total(adata_all)
     sc.pp.log1p(adata_all)
-
     adata_1 = adata_all[adata_all.obs["batch"] == "0"]
     adata_2 = adata_all[adata_all.obs["batch"] == "1"]
     sc.pp.scale(adata_1)
     sc.pp.scale(adata_2)
-
     X = adata_1.X.toarray() if isinstance(adata_1.X, (csc_matrix, csr_matrix)) else adata_1.X
     Y = adata_2.X.toarray() if isinstance(adata_2.X, (csc_matrix, csr_matrix)) else adata_2.X
-
-    cor_var = X @ Y.T 
+    cor_var = X @ Y.T
     U, S, Vh = randomized_svd(cor_var, n_components=n_comps, random_state=0)
- 
     Z_x = U @ np.diag(np.sqrt(S))
-    Z_y = Vh.T @ np.diag(np.sqrt(S)) 
+    Z_y = Vh.T @ np.diag(np.sqrt(S))   
     adata_1.obsm['feat'] = Z_x
-    adata_2.obsm['feat'] = Z_y
-    
+    adata_2.obsm['feat'] = Z_y 
     return adata_1, adata_2
-    
-
 
 
 
@@ -192,6 +155,8 @@ def clr_normalize_each_cell(adata, inplace=True):
     return adata
 
 
+
+#import sklearn
 def lsi(
         adata: anndata.AnnData, n_components: int = 20,
         use_highly_variable: Optional[bool] = None, **kwargs
@@ -248,11 +213,6 @@ def pca(adata, use_reps=None, n_comps=10):
     return feat_pca
 
 
-
-
-
-
-
 def mclust_R(adata, num_cluster, modelNames='EEE', used_rep='emb_pca', random_seed=0):
     """
     Clustering using the mclust algorithm with data from adata.X.
@@ -267,13 +227,14 @@ def mclust_R(adata, num_cluster, modelNames='EEE', used_rep='emb_pca', random_se
     r_random_seed(random_seed)
     rmclust = robjects.r['Mclust']
     
-
+    # 使用 adata.X 或者降维后的矩阵
     data = adata.obsm[used_rep] if used_rep in adata.obsm else adata.X.toarray()
 
-
+    # 确保数据是标准化的
     scaler = StandardScaler()
     data_scaled = scaler.fit_transform(data)
 
+    # 调用 Mclust
     res = rmclust(rpy2.robjects.numpy2ri.numpy2rpy(data_scaled), num_cluster, modelNames)
     mclust_res = np.array(res[-2])
 
@@ -282,11 +243,13 @@ def mclust_R(adata, num_cluster, modelNames='EEE', used_rep='emb_pca', random_se
     adata.obs['mclust'] = adata.obs['mclust'].astype('category')
     return adata
 
+# 更新 clustering 函数
 def clustering(adata, n_clusters=7, radius=50, key='X', method='mclust', start=0.1, end=3.0, increment=0.01, refinement=False,random=0,n_comp=30):
     """
     Spatial clustering using adata.X or other specified representations.
     """
-    if key == 'X':  
+    if key == 'X':  # 使用原始表达矩阵
+        # 如果是稀疏矩阵，转换为稠密格式，否则直接使用
         if not isinstance(adata.X, np.ndarray):
             data = adata.X.toarray()
         else:
@@ -298,8 +261,9 @@ def clustering(adata, n_clusters=7, radius=50, key='X', method='mclust', start=0
     # PCA 降维
     pca = PCA(n_components=n_comp, random_state=2024)
     embedding = pca.fit_transform(data)
-    adata.obsm['emb_pca'] = embedding   
+    adata.obsm['emb_pca'] = embedding   # 存储 PCA 结果
 
+    # 根据聚类方法选择
     if method == 'mclust':
         adata = mclust_R(adata, used_rep='emb_pca', num_cluster=n_clusters,random_seed=random)
         adata.obs['3d-OT'] = adata.obs['mclust']
@@ -312,19 +276,21 @@ def clustering(adata, n_clusters=7, radius=50, key='X', method='mclust', start=0
         sc.tl.louvain(adata, random_state=0, resolution=res)
         adata.obs['domain'] = adata.obs['louvain']
        
-
+    # 精炼标签（可选）
     if refinement:  
-        new_type = refine_label(adata, radius, key='3d-OT')
-        adata.obs['3d-OT'] = new_type
+        new_type = refine_label(adata, radius, key='domain')
+        adata.obs['domain'] = new_type
 
-def refine_label(adata, radius=90, key='3d-OT'):
+# 更新 refine_label 函数
+def refine_label(adata, radius=90, key='domain'):
     """
     Refine clustering labels based on spatial neighbors.
     """
     n_neigh = radius
     new_type = []
     old_type = adata.obs[key].values
-
+    
+    # 计算空间距离
     position = adata.obsm['spatial']
     from scipy.spatial.distance import cdist
     distance = cdist(position, position, metric='euclidean')     
@@ -341,10 +307,3 @@ def refine_label(adata, radius=90, key='3d-OT'):
         
     new_type = [str(i) for i in list(new_type)]    
     return new_type
-
-
-def chamfer_distance(points_a, points_b):
-    dists_a_to_b = np.min(np.linalg.norm(points_a[:, np.newaxis] - points_b, axis=2), axis=1)
-    dists_b_to_a = np.min(np.linalg.norm(points_b[:, np.newaxis] - points_a, axis=2), axis=1)
-    
-    return np.mean(dists_a_to_b**2) + np.mean(dists_b_to_a**2)
