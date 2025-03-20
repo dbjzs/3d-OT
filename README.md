@@ -26,4 +26,4 @@ You'll need to install the following packages in order to run the codes.
 ## Tutorial
 All the result tutorials mentioned in the text can be found here：
 
-<img src='docs/show674.png' width='400'>
+<img src='docs/show674.png' width='200'>
