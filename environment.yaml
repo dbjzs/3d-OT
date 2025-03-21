@@ -8,6 +8,7 @@ _sysroot_linux-64_curr_repodata_hack 3                   haa98f57_10    defaults
 anndata                   0.10.5.post1             pypi_0    pypi
 array-api-compat          1.11.1                   pypi_0    pypi
 asttokens                 3.0.0                    pypi_0    pypi
+attrs                     25.3.0                   pypi_0    pypi
 binutils_impl_linux-64    2.40                 h5293946_0    defaults
 binutils_linux-64         2.40.0               hc2dff05_2    defaults
 blas                      1.0                    openblas    defaults
@@ -49,10 +50,13 @@ icu                       73.1                 h6a678d5_0    defaults
 idna                      3.10                     pypi_0    pypi
 ipykernel                 6.29.5                   pypi_0    pypi
 ipython                   8.34.0                   pypi_0    pypi
+ipython-genutils          0.2.0                    pypi_0    pypi
 jedi                      0.19.2                   pypi_0    pypi
 jinja2                    3.1.6                    pypi_0    pypi
 joblib                    1.3.2                    pypi_0    pypi
 jpeg                      9e                   h5eee18b_3    defaults
+jsonschema                4.23.0                   pypi_0    pypi
+jsonschema-specifications 2024.10.1                pypi_0    pypi
 jupyter-client            8.6.3                    pypi_0    pypi
 jupyter-core              5.7.2                    pypi_0    pypi
 kernel-headers_linux-64   3.10.0              h57e8cba_10    defaults
@@ -98,6 +102,7 @@ matplotlib-inline         0.1.7                    pypi_0    pypi
 mpmath                    1.3.0                    pypi_0    pypi
 narwhals                  1.31.0                   pypi_0    pypi
 natsort                   8.4.0                    pypi_0    pypi
+nbformat                  4.2.0                    pypi_0    pypi
 ncurses                   6.4                  h6a678d5_0    defaults
 nest-asyncio              1.6.0                    pypi_0    pypi
 networkx                  3.4.2                    pypi_0    pypi
@@ -144,7 +149,9 @@ pyzmq                     26.3.0                   pypi_0    pypi
 r-base                    4.3.1                h1ae530e_0    defaults
 r-mclust                  6.1.1             r43hc29710b_0    conda-forge
 readline                  8.2                  h5eee18b_0    defaults
+referencing               0.36.2                   pypi_0    pypi
 requests                  2.32.3                   pypi_0    pypi
+rpds-py                   0.23.1                   pypi_0    pypi
 rpy2                      3.5.11                   pypi_0    pypi
 scanpy                    1.9.8                    pypi_0    pypi
 scikit-learn              1.4.0                    pypi_0    pypi
