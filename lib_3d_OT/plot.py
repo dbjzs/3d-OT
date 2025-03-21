@@ -451,3 +451,185 @@ def _plot_multi_flows(
     print(f"Layer 1 points count: {len(layer_1_pcloud_3D)}")
 
     return all_arrow_ends,layer_1_pcloud_3D
+
+
+
+
+
+
+
+
+import numpy as np
+import torch
+import plotly.graph_objects as go
+import pandas as pd
+from scipy.spatial import distance
+from matplotlib import cm
+
+def compute_all_pairs_flows_and_labels(
+    graphs, aligned_models, device, height_scale=1.0
+):
+    all_arrow_starts = []
+    all_arrow_ends = []
+    all_start_labels = []
+    all_end_labels = []
+
+    for pair_idx, model in enumerate(aligned_models):
+        idx = 2 * pair_idx + 1 
+        if idx >= len(graphs):
+            break
+        
+        data2, data1 = graphs[idx], graphs[idx - 1] 
+        model.eval()
+        with torch.no_grad():
+            recon_flow, _, _, _, pclouds = model(data1.to(device), data2.to(device))
+        
+        pcloud_np = pclouds[0].squeeze(0).cpu().numpy()
+        flow_np = recon_flow.squeeze(0).cpu().numpy()
+        z_coord = np.full((pcloud_np.shape[0], 1), pair_idx * height_scale)
+        pcloud_3D = np.hstack((pcloud_np, z_coord))
+        flow_3D = np.hstack((flow_np, np.full((flow_np.shape[0], 1), height_scale)))
+
+        start_labels = data1.truth
+        starts = pcloud_3D
+        ends = starts + flow_3D
+
+        next_pcloud_np = pclouds[1].squeeze(0).cpu().numpy()
+        next_z_coord = np.full((next_pcloud_np.shape[0], 1), (pair_idx + 1) * height_scale)
+        next_pcloud_3D = np.hstack((next_pcloud_np, next_z_coord))
+        end_labels = transfer_labels_to_flow_ends(ends, next_pcloud_3D, data2.truth)
+
+        all_start_labels.extend([f"slice{pair_idx}_{lbl}" for lbl in start_labels])
+        all_end_labels.extend([f"slice{pair_idx + 1}_{lbl}" for lbl in end_labels])
+        all_arrow_starts.append(starts)
+        all_arrow_ends.append(ends)
+
+    all_arrow_starts = np.concatenate(all_arrow_starts)
+    all_arrow_ends = np.concatenate(all_arrow_ends)
+    all_start_labels = np.array(all_start_labels)
+    all_end_labels = np.array(all_end_labels)
+
+    print(f" {len(all_start_labels)} pair flow")
+    return all_arrow_starts, all_arrow_ends, all_start_labels, all_end_labels
+
+def transfer_labels_to_flow_ends(all_arrow_ends, final_pcloud_3D, final_truth):
+    transferred_labels = np.empty(len(all_arrow_ends), dtype=object)
+    
+    if len(all_arrow_ends) == 0 or len(final_pcloud_3D) == 0:
+        transferred_labels.fill('Unknown')
+        return transferred_labels
+    
+    dist_matrix = distance.cdist(all_arrow_ends, final_pcloud_3D, 'euclidean')
+    nearest_indices = np.argsort(dist_matrix, axis=1)[:, :8]
+    
+    for i in range(len(all_arrow_ends)):
+        nearest_labels = final_truth[nearest_indices[i]]
+        unique_labels, counts = np.unique(nearest_labels, return_counts=True)
+        transferred_labels[i] = unique_labels[np.argmax(counts)]
+    
+    return transferred_labels
+
+def plot_multi_slice_sankey_with_same_label_priority(
+    graphs, aligned_models, device, height_scale=1.0, 
+    min_flow_threshold=10, save_path=None, csv_output_path=None
+):
+
+    all_arrow_starts, all_arrow_ends, all_start_labels, all_end_labels = compute_all_pairs_flows_and_labels(
+        graphs=graphs, aligned_models=aligned_models, device=device, height_scale=height_scale
+    )
+
+
+    if csv_output_path:
+        df = pd.DataFrame({
+            'Start_Label': all_start_labels,
+            'End_Label': all_end_labels,
+            'Start_X': all_arrow_starts[:, 0],
+            'Start_Y': all_arrow_starts[:, 1],
+            'Start_Z': all_arrow_starts[:, 2],
+            'End_X': all_arrow_ends[:, 0],
+            'End_Y': all_arrow_ends[:, 1],
+            'End_Z': all_arrow_ends[:, 2]
+        })
+        df.to_csv(csv_output_path, index=False)
+        print(f"folw file save: {csv_output_path}")
+
+
+    unique_labels = sorted(np.unique(np.concatenate([all_start_labels, all_end_labels])))
+    label_to_idx = {label: i for i, label in enumerate(unique_labels)}
+    
+    source = [label_to_idx[start] for start in all_start_labels]
+    target = [label_to_idx[end] for end in all_end_labels]
+    value = [1] * len(source)
+
+
+    flow_dict = {}
+    for s, t in zip(source, target):
+        flow_dict[(s, t)] = flow_dict.get((s, t), 0) + 1
+
+    filtered_flows = {}
+    for (s, t), count in flow_dict.items():
+        start_label = unique_labels[s]
+        end_label = unique_labels[t]
+        start_type = start_label.split('_', 1)[1]
+        end_type = end_label.split('_', 1)[1]
+        
+        if start_type == end_type:
+            filtered_flows[(s, t)] = count
+        elif count > min_flow_threshold:
+            filtered_flows[(s, t)] = count
+
+    if not filtered_flows:
+        print(f"no link")
+        return
+
+
+    source_agg = [k[0] for k in filtered_flows.keys()]
+    target_agg = [k[1] for k in filtered_flows.keys()]
+    value_agg = list(filtered_flows.values())
+
+
+    used_labels = sorted(set([unique_labels[s] for s in source_agg] + [unique_labels[t] for t in target_agg]))
+    label_to_idx_filtered = {label: i for i, label in enumerate(used_labels)}
+
+
+    unique_cell_types = sorted(set([lbl.split('_', 1)[1] for lbl in used_labels]))
+    color_map = {ct: cm.tab20(i / len(unique_cell_types)) for i, ct in enumerate(unique_cell_types)}
+    
+
+    node_colors = []
+    for label in used_labels:
+        cell_type = label.split('_', 1)[1]
+        rgba = color_map[cell_type]
+        rgba_str = f"rgba({int(rgba[0]*255)}, {int(rgba[1]*255)}, {int(rgba[2]*255)}, 0.3)"
+        node_colors.append(rgba_str)
+
+    source_agg = [label_to_idx_filtered[unique_labels[s]] for s in source_agg]
+    target_agg = [label_to_idx_filtered[unique_labels[t]] for t in target_agg]
+
+    print(f"filter: {len(source_agg)}  > {min_flow_threshold}）")
+
+    fig_sankey = go.Figure(data=[go.Sankey(
+        node=dict(
+            pad=15,
+            thickness=20,
+            line=dict(color="black", width=0.01),
+            label=used_labels,
+            color=node_colors 
+        ),
+        link=dict(
+            source=source_agg,
+            target=target_agg,
+            value=value_agg,
+            color="rgba(128, 128, 128, 0.4)" 
+        )
+    )])
+
+    fig_sankey.update_layout(
+        title_text=f"Multi-Slice Cell Type Flow Sankey Diagram (Same Labels Retained, Others > {min_flow_threshold})",
+        font_size=15,
+        font_color="black"
+    )
+
+    if save_path:
+        fig_sankey.write_html(save_path)
+        print(f"sankeplot save: {save_path}")

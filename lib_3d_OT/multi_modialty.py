@@ -1,7 +1,6 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch_geometric.nn import SAGEConv
 from torch_geometric.data import Data
 
 import torch.nn as nn
@@ -9,7 +8,7 @@ from lib_3d_OT.ottools.utils import log_string
 from lib_3d_OT.ottools import ot, reconstruction as R
 from lib_3d_OT.ottools.losses import compute_loss_unsupervised,chamfer_loss
 from lib_3d_OT.utils import set_seed
-
+set_seed(7)
 
 class SetConv(torch.nn.Module):
     def __init__(self, nb_feat_in, nb_feat_out):
