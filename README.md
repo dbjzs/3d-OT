@@ -21,6 +21,9 @@ You'll need to install the following packages in order to run the codes.
 * tqdm==4.67.1
 * R==4.3.1
 * rpy2==3.5.11
+* ploty
+* nbformat
+* libopenblas==0.3.25
 
 
 ## Tutorial
