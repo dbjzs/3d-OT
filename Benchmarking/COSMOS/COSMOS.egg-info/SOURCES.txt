@@ -1,0 +1,7 @@
+LICENSE
+README.md
+setup.py
+COSMOS/COSMOS.egg-info/PKG-INFO
+COSMOS/COSMOS.egg-info/SOURCES.txt
+COSMOS/COSMOS.egg-info/dependency_links.txt
+COSMOS/COSMOS.egg-info/top_level.txt

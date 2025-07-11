@@ -1,0 +1,8 @@
+Metadata-Version: 2.2
+Name: COSMOS
+Version: 1.0
+Summary: The software is to implement the COSMOS. Please see the website for details.
+Home-page: https://github.com/Lin-Xu-lab/COSMOS.git
+License-File: LICENSE
+Dynamic: home-page
+Dynamic: summary
