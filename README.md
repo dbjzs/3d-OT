@@ -1,5 +1,5 @@
 # 3d-OT
-
+[![Stars](https://img.shields.io/github/stars/dbjzs/3d-OT?logo=GitHub&color=yellow)](https://github.com/dbjzs/3d-OT/stargazers)
 
 3d-OT can be used for single-modal and multimodal spatial domain recognition, single-modal, multi-modal, and cross-platform alignment tasks, as well as 3D reconstruction.
 ![workframe.png](/framework.jpg)
