@@ -46,14 +46,4 @@ conda activate 3d-OT
 pip install -r requirements.txt
 pip install git+https://github.com/dbjzs/3d-OT.git
 ```
-## Reference
-- If you find 3d-OT useful for your research, please consider citing the 3d-OT manuscript.
-```
-@article{Dai 2026,
-  author    = {Dai, et al.},
-  title     = {3d-OT: A Deep Geometry-aware Framework for Heterogeneous Slices Alignment of Spatial Multi-omics},
-  journal   = {Nature Methods},
-  year      = {2026},
-  url       = {Acceptance in principle}
-}
-```
+
