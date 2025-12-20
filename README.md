@@ -1,5 +1,5 @@
 # 3d-OT
-[![Stars](https://img.shields.io/github/starts/dbjzs/3d-OT.svg)](https://github.com/dbjzs/3d-OT/stargazers)
+[![Stars](https://img.shields.io/github/stargazers/dbjzs/3d-OT.svg)](https://github.com/dbjzs/3d-OT/stargazers)
 [![Forks](https://img.shields.io/github/forks/dbjzs/3d-OT.svg)](https://github.com/dbjzs/3d-OT/forks)
 ![Python 3.10.13](https://img.shields.io/badge/python->=3.10-blue.svg)
 
