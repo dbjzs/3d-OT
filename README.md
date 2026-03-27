@@ -47,3 +47,16 @@ pip install -r requirements.txt
 pip install git+https://github.com/dbjzs/3d-OT.git
 ```
 
+### Reference
+- If you find 3d-OT useful for your research, please consider citing the 3d-OT manuscript [Nature Methods](https://www.nature.com/articles/s41592-026-03034-9).
+
+```
+@article{Dai,
+  title = {3d-OT: a deep geometry-aware framework for heterogeneous slices alignment of spatial multi-omics},
+  author = {Dai, et al.},
+  year = {2026},
+  journal = {Nature Methods},
+  doi = {https://doi.org/10.1038/s41592-026-03034-9},
+}
+```
+
