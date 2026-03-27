@@ -1,7 +1,8 @@
 # 3d-OT
 [![Stars](https://img.shields.io/github/stars/dbjzs/3d-OT?logo=GitHub&color=yellow)](https://github.com/dbjzs/3d-OT/stargazers)
 ![Python 3.10.13](https://img.shields.io/badge/python->=3.10-blue.svg)
-[![Docs](https://readthedocs.org/projects/3d-OT/badge/?version=latest)](https://3d-ot.readthedocs.io/en/latest)  
+[![Docs](https://readthedocs.org/projects/3d-OT/badge/?version=latest)](https://3d-ot.readthedocs.io/en/latest)
+![Nature Methods](https://www.nature.com/articles/s41592-026-03034-9)
 
 3d-OT can be used for single-modal and multimodal spatial domain recognition, single-modal, multi-modal, and cross-platform alignment tasks, as well as 3D reconstruction.
 ![workframe.png](/framework.jpg)
