@@ -35,16 +35,26 @@ All the result tutorials mentioned in the text can be found [here](https://3d-ot
 
 <img src='docs/show674.png' width='250'> <img src='docs/H3K27ac.PNG' width='350'> <img src='docs/3D.png' width='200'>
 
-## Installation
+## Installation via Github
+#### 📥 Download
 ```
 git clone https://github.com/dbjzs/3d-OT.git
 cd 3d-OT
+```
+#### 🔧 environment
+3d-OT is available for Python 3.10. We recommend to train 3d-OT models on a device with GPU support.  
+* Using the conda install environment
+```
 conda create -n 3d-OT -c conda-forge python==3.10.13 libopenblas=0.3.25 r-base=4.3.1 r-mclust -y
 conda activate 3d-OT
-
+```
+#### 🛠️package
+* Then using pip install 3d-OT.
+```
 pip install -r requirements.txt
 pip install .
 ```
+
 
 ### Reference
 - If you find 3d-OT useful for your research, please consider citing the 3d-OT manuscript [Nature Methods](https://www.nature.com/articles/s41592-026-03034-9).
