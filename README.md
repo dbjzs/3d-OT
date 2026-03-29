@@ -12,9 +12,7 @@
 
 ## Requirements
 You'll need to install the following packages in order to run the codes.
-* Python==3.10.13
 * anndata==0.10.5.post1
-* matplotlib==3.6.2
 * numpy==1.26.3
 * pandas==2.2.3
 * scanpy==1.9.8
@@ -24,11 +22,11 @@ You'll need to install the following packages in order to run the codes.
 * scipy==1.12.0
 * scikit-misc==0.5.1
 * tqdm==4.67.1
-* R==4.3.1
 * rpy2==3.5.11
-* ploty
-* nbformat
-* libopenblas==0.3.25
+* plotly==6.0.1
+* nbformat==5.10.4
+* matplotlib-inline==0.1.6
+
 
 
 ## Tutorial
@@ -41,10 +39,11 @@ All the result tutorials mentioned in the text can be found [here](https://3d-ot
 ```
 git clone https://github.com/dbjzs/3d-OT.git
 cd 3d-OT
-conda create -n 3d-OT -f environment.yaml
+conda create -n 3d-OT -c conda-forge python==3.10.13 libopenblas=0.3.25 r-base=4.3.1 r-mclust -y
 conda activate 3d-OT
+
 pip install -r requirements.txt
-pip install git+https://github.com/dbjzs/3d-OT.git
+pip install .
 ```
 
 ### Reference
