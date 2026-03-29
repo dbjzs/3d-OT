@@ -5,7 +5,7 @@ setup(
     url='https://github.com/dbjzs/3d-OT',
     author='Bingjie Dai',
     author_email='17516970902@163.com',
-    license='MIT',
+    license='Apache',
     packages=['lib_3d_OT', 'lib_3d_OT.ottools'],
     zip_safe=False
 )

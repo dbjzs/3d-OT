@@ -1,15 +1,18 @@
 # 3d-OT
+[![Stars](https://img.shields.io/github/stars/dbjzs/3d-OT?logo=GitHub&color=yellow)](https://github.com/dbjzs/3d-OT/stargazers)
+![Python 3.10.13](https://img.shields.io/badge/python->=3.10-blue.svg)
+[![Docs](https://readthedocs.org/projects/3d-OT/badge/?version=latest)](https://3d-ot.readthedocs.io/en/latest)
+
 3d-OT can be used for single-modal and multimodal spatial domain recognition, single-modal, multi-modal, and cross-platform alignment tasks, as well as 3D reconstruction.
 ![workframe.png](/framework.jpg)
+
 
 ## Overview
 3d-OT leverages the PointNet++ model and optimal transport with soft communication as its foundation. Through a modular integration approach, it seamlessly supports single-modal, multi-modal, and diverse spatial omics data from various technologies. By precisely extracting meaningful features from positional information, 3d-OT achieves high-resolution analysis of spatial omics data. Utilizing the framework of soft communication optimal transport, it effectively tackles challenges such as non-rigid alignment and inconsistent resolution during the alignment process. Furthermore, it introduces a novel evaluation metric, the Chamfer distance, to assess alignment quality.
 
 ## Requirements
 You'll need to install the following packages in order to run the codes.
-* Python==3.10.13
 * anndata==0.10.5.post1
-* matplotlib==3.6.2
 * numpy==1.26.3
 * pandas==2.2.3
 * scanpy==1.9.8
@@ -19,11 +22,11 @@ You'll need to install the following packages in order to run the codes.
 * scipy==1.12.0
 * scikit-misc==0.5.1
 * tqdm==4.67.1
-* R==4.3.1
 * rpy2==3.5.11
-* ploty
-* nbformat
-* libopenblas==0.3.25
+* plotly==6.0.1
+* nbformat==5.10.4
+* matplotlib-inline==0.1.6
+
 
 
 ## Tutorial
@@ -36,8 +39,23 @@ All the result tutorials mentioned in the text can be found [here](https://3d-ot
 ```
 git clone https://github.com/dbjzs/3d-OT.git
 cd 3d-OT
-conda create -n 3d-OT -f environment.yaml
+conda create -n 3d-OT -c conda-forge python==3.10.13 libopenblas=0.3.25 r-base=4.3.1 r-mclust -y
 conda activate 3d-OT
+
 pip install -r requirements.txt
-pip install git+https://github.com/dbjzs/3d-OT.git
+pip install .
 ```
+
+### Reference
+- If you find 3d-OT useful for your research, please consider citing the 3d-OT manuscript [Nature Methods](https://www.nature.com/articles/s41592-026-03034-9).
+
+```
+@article{Dai,
+  title = {3d-OT: a deep geometry-aware framework for heterogeneous slices alignment of spatial multi-omics},
+  author = {Dai, et al.},
+  year = {2026},
+  journal = {Nature Methods},
+  doi = {https://doi.org/10.1038/s41592-026-03034-9},
+}
+```
+
