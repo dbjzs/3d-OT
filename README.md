@@ -55,7 +55,12 @@ pip install -r requirements.txt
 pip install .
 ```
 
-
+## Jupyter Tutorial
+```
+pip install ipykernel
+python -m ipykernel install --user --name=3d-OT --display-name="Python (3d-OT)" 
+```
+Please use the core name as follows:"Python [conda env:3d-OT]"
 
 ### Reference
 - If you find 3d-OT useful for your research, please consider citing the 3d-OT manuscript [Nature Methods](https://www.nature.com/articles/s41592-026-03034-9).
