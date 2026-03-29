@@ -10,30 +10,6 @@
 ## Overview
 3d-OT leverages the PointNet++ model and optimal transport with soft communication as its foundation. Through a modular integration approach, it seamlessly supports single-modal, multi-modal, and diverse spatial omics data from various technologies. By precisely extracting meaningful features from positional information, 3d-OT achieves high-resolution analysis of spatial omics data. Utilizing the framework of soft communication optimal transport, it effectively tackles challenges such as non-rigid alignment and inconsistent resolution during the alignment process. Furthermore, it introduces a novel evaluation metric, the Chamfer distance, to assess alignment quality.
 
-## Requirements
-You'll need to install the following packages in order to run the codes.
-* anndata==0.10.5.post1
-* numpy==1.26.3
-* pandas==2.2.3
-* scanpy==1.9.8
-* torch==2.2.0
-* torch_geometric==2.4.0
-* scikit-learn==1.4.0
-* scipy==1.12.0
-* scikit-misc==0.5.1
-* tqdm==4.67.1
-* rpy2==3.5.11
-* plotly==6.0.1
-* nbformat==5.10.4
-* matplotlib-inline==0.1.6
-
-
-
-## Tutorial
-All the result tutorials mentioned in the text can be found [here](https://3d-ot.readthedocs.io/en/latest/)  
-<img src='docs/show674.png' width='250'> <img src='docs/H3K27ac.PNG' width='350'> <img src='docs/3D.png' width='200'>  
-All the h5ad files used for reproducing the results can be found in the [Zenodo repository](https://zenodo.org/records/15089427).
-
 
 ## Installation via Github
 #### 📥 Download
@@ -61,6 +37,33 @@ pip install ipykernel
 python -m ipykernel install --user --name=3d-OT --display-name="Python (3d-OT)" 
 ```
 Please use the core name as follows:"Python [conda env:3d-OT]"
+
+
+## Requirements
+You'll need to install the following packages in order to run the codes.
+* anndata==0.10.5.post1
+* numpy==1.26.3
+* pandas==2.2.3
+* scanpy==1.9.8
+* torch==2.2.0
+* torch_geometric==2.4.0
+* scikit-learn==1.4.0
+* scipy==1.12.0
+* scikit-misc==0.5.1
+* tqdm==4.67.1
+* rpy2==3.5.11
+* plotly==6.0.1
+* nbformat==5.10.4
+* matplotlib-inline==0.1.6
+
+
+
+## Tutorial
+All the result tutorials mentioned in the text can be found [here](https://3d-ot.readthedocs.io/en/latest/)  
+<img src='docs/show674.png' width='250'> <img src='docs/H3K27ac.PNG' width='350'> <img src='docs/3D.png' width='200'>  
+All the h5ad files used for reproducing the results can be found in the [Zenodo repository](https://zenodo.org/records/15089427).
+
+
 
 ### Reference
 - If you find 3d-OT useful for your research, please consider citing the 3d-OT manuscript [Nature Methods](https://www.nature.com/articles/s41592-026-03034-9).
