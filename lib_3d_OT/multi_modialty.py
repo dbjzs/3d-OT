@@ -210,17 +210,18 @@ class UnifiedModel(nn.Module):
         return recon_flow, corr_conf, target_cross_recon, similarity_cross
 
     def get_encoder_results(self,model1,model2,pcloud_list1,pcloud_list2):
-        model1.eval()
-        model2.eval()
-        recon1, recon2, mixed_modal_features1 = model1(pcloud_list1[0], pcloud_list1[1])
-        recon3, recon4, mixed_modal_features2 = model2(pcloud_list2[0], pcloud_list2[1])
-        epsilon = 1e-5
-        min_val = mixed_modal_features1.min()
-        max_val = mixed_modal_features1.max()
-        normalized_features1 = (mixed_modal_features1 - min_val) / (max_val - min_val + epsilon)
-        min_val = mixed_modal_features2.min()
-        max_val = mixed_modal_features2.max()
-        normalized_features2 = (mixed_modal_features2 - min_val) / (max_val - min_val + epsilon)
+        with torch.no_grad():
+            model1.eval()
+            model2.eval()
+            recon1, recon2, mixed_modal_features1 = model1(pcloud_list1[0], pcloud_list1[1])
+            recon3, recon4, mixed_modal_features2 = model2(pcloud_list2[0], pcloud_list2[1])
+            epsilon = 1e-5
+            min_val = mixed_modal_features1.min()
+            max_val = mixed_modal_features1.max()
+            normalized_features1 = (mixed_modal_features1 - min_val) / (max_val - min_val + epsilon)
+            min_val = mixed_modal_features2.min()
+            max_val = mixed_modal_features2.max()
+            normalized_features2 = (mixed_modal_features2 - min_val) / (max_val - min_val + epsilon)
         return normalized_features1,normalized_features2,pcloud_list1[0],pcloud_list2[0]
 
     
@@ -275,13 +276,13 @@ def train(model, pcloud_list, optimizer, scheduler, device, nb_epochs=1, use_smo
             loss, target_recon_loss, smooth_flow_loss, div_flow_loss = compute_loss_unsupervised(
                 recon_flow, corr_conf, target_recon, graph, pclouds, args,device
             )
+            loss = loss / (len(pcloud_list) - 1)
+            loss.backward()
+            total_loss += loss.item() 
 
-
-            total_loss += loss
-
-        total_loss.backward()  
+     
         optimizer.step()
         scheduler.step() 
 
-        print(f"\rTime Pair {idx},total_loss: {total_loss.item():.4f},smooth_flow_loss: {smooth_flow_loss.item():.4f} "
+        print(f"\rTime Pair {idx},total_loss: {total_loss:.4f},smooth_flow_loss: {smooth_flow_loss.item():.4f} "
                   f"Target Recon Loss: {target_recon_loss.item():.4f}, Div Flow Loss: {div_flow_loss.item():.4f}",end="")
