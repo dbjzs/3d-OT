@@ -183,13 +183,14 @@ class UnifiedModel(nn.Module):
         return recon_flow, corr_conf, target_cross_recon, similarity_cross
 
     def get_encoder_results(self,model1,model2,graph1,graph2):
-        model1.eval()
-        model2.eval()
-        features1= model1.get_features(graph1)
-        features2= model2.get_features(graph2)
-        
-        features1=model1.decode(features1)
-        features2=model2.decode(features2)
+        with torch.no_grad():
+            model1.eval()
+            model2.eval()
+            features1= model1.get_features(graph1)
+            features2= model2.get_features(graph2)
+            
+            features1=model1.decode(features1)
+            features2=model2.decode(features2)
         return features1,features2,graph1,graph2
 
 
@@ -247,15 +248,16 @@ def train(model, pcloud_list, optimizer, scheduler, device, nb_epochs=1, use_cor
             loss, target_recon_loss,smooth_flow_loss, div_flow_loss = compute_loss_unsupervised(
                 recon_flow, corr_conf, target_recon, graph, pclouds, args,device
             )
+            loss = loss / (len(pcloud_list) - 1)
+            loss.backward()
+            total_loss += loss.item()
 
-            total_loss += loss
 
 
-        total_loss.backward()
         optimizer.step()
         scheduler.step()
 
-        print(f"\rTime Pair {idx},total_loss: {total_loss.item():.4f},smooth_flow_loss: {smooth_flow_loss.item():.4f} "
+        print(f"\rTime Pair {idx},total_loss: {total_loss:.4f},smooth_flow_loss: {smooth_flow_loss.item():.4f} "
                   f"Target Recon Loss: {target_recon_loss.item():.8f},Div Flow Loss: {div_flow_loss.item():.4f}",end="")
 
 
