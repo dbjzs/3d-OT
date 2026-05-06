@@ -1,4 +1,5 @@
 # 3d-OT
+[![Nature Methods](https://img.shields.io/badge/Published%20in-Nature%20Methods-0077b6?style=flat&logo=nature)](https://www.nature.com/articles/s41592-026-03034-9)
 [![Stars](https://img.shields.io/github/stars/dbjzs/3d-OT?logo=GitHub&color=yellow)](https://github.com/dbjzs/3d-OT/stargazers)
 ![Python 3.10.13](https://img.shields.io/badge/python->=3.10-blue.svg)
 [![Docs](https://readthedocs.org/projects/3d-OT/badge/?version=latest)](https://3d-ot.readthedocs.io/en/latest)
