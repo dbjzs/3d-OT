@@ -4,6 +4,7 @@
 ![Python 3.10.13](https://img.shields.io/badge/python->=3.10-blue.svg)
 [![Docs](https://readthedocs.org/projects/3d-OT/badge/?version=latest)](https://3d-ot.readthedocs.io/en/latest)
 [![All Versions Unique Downloads](https://img.shields.io/badge/dynamic/json?color=blue&label=Data%20Downloads&query=$.stats.unique_downloads&url=https://zenodo.org/api/records/15089427)](https://zenodo.org/records/15089427)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/dbjzs/3d-OT/blob/main/LICENSE)
 
 3d-OT can be used for single-modal and multimodal spatial domain recognition, single-modal, multi-modal, and cross-platform alignment tasks, as well as 3D reconstruction.
 ![workframe.png](/framework.jpg)
